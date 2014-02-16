@@ -8,8 +8,6 @@ cd ../vim73
 
 for patchno in $patchnolist; do
     patchfile="../patches73/7.3.$patchno";
-#    echo $patchfile
     cat $patchfile
 done | patch -p0
-#cat ../patches73/* | patch -p0
 
