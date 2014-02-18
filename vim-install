@@ -17,7 +17,7 @@ do
 done
 
 TARGET_VERSION=$1
-TARGET_PATCHNO=$2
+#TARGET_PATCHNO=$2
 ARCH="unix"
 
 if [ "$TARGET_VERSION" = "" ];then
@@ -44,7 +44,15 @@ tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
 # patch download
 mkdir -p $PATCH_DIR
 cd $PATCH_DIR
-curl -O "$SRC_ARC_URL_PATH/patches/$TARGET_VERSION/$TARGET_VERSION.[001-$TARGET_PATCHNO]"
+ftp -n -i  <<EOF
+open ftp.vim.org
+user anonymous pass
+cd pub/vim/patches/$TARGET_VERSION
+pwd
+ls $TARGET_VERSION.*
+mget $TARGET_VERSION.*
+bye
+EOF
 patchlist=`ls -v $TARGET_VERSION.*`
 
 # run patch
