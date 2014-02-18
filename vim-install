@@ -1,0 +1,66 @@
+#!/bin/sh
+
+CUR_DIR=`pwd`
+
+usage() {
+    echo "Usage: $0 version"
+}
+
+while getopts h OPT
+do
+    case $OPT in
+        h)  usage
+            ;;
+        \?)
+            ;;
+    esac
+done
+
+TARGET_VERSION=$1
+TARGET_PATCHNO=$2
+ARCH="unix"
+
+if [ "$TARGET_VERSION" = "" ];then
+    TARGET_VERSION="7.4"
+fi
+
+ARC_DIR="$CUR_DIR/vim"
+SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
+PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
+
+SRC_ARC_URL_PATH="ftp://ftp.vim.org/pub/vim"
+SRC_ARC_FILENAME="vim-"$TARGET_VERSION".tar.bz2"
+
+# vim source download
+mkdir -p $ARC_DIR
+cd $ARC_DIR
+curl -O $SRC_ARC_URL_PATH/$ARCH/$SRC_ARC_FILENAME
+
+rm -fr $SRC_DIR
+mkdir -p $SRC_DIR
+cd $SRC_DIR
+tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
+
+# patch download
+mkdir -p $PATCH_DIR
+cd $PATCH_DIR
+curl -O "$SRC_ARC_URL_PATH/patches/$TARGET_VERSION/$TARGET_VERSION.[001-$TARGET_PATCHNO]"
+patchlist=`ls -v $TARGET_VERSION.*`
+
+# run patch
+cd $SRC_DIR
+cd `ls | grep vim`
+for patchfile in $patchlist; do
+    cat $PATCH_DIR/$patchfile
+done | patch -p0
+
+# configure
+./configure \
+--enable-multibyte \
+--with-features=huge \
+--disable-selinux \
+--prefix=/usr/local
+
+# make
+make clean
+make

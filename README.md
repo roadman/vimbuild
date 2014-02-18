@@ -1,12 +1,14 @@
 vim_compile
 ===========
 
-vim74 build
+usage
 -----------
 ```bash
-$ sh download_20140217_vim74.sh
-$ sh patch74.sh
-$ sh build.sh
-$ cd vim74
-$ sudo make install
+./vim-install [TARGET_VERSION] [TARGET_PATCHNO]
+```
+
+build example
+-----------
+```bash
+$ ./vim-install 7.4 182
 ```
