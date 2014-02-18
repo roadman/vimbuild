@@ -1,6 +1,4 @@
 *.swp
-vim73
-vim-*.tar.bz2
-patches73
-vim74
-patches74
+vim
+patches
+build
