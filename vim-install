@@ -10,14 +10,15 @@ while getopts h OPT
 do
     case $OPT in
         h)  usage
+            exit
             ;;
-        \?)
+        \?) usage
+            exit
             ;;
     esac
 done
 
 TARGET_VERSION=$1
-#TARGET_PATCHNO=$2
 ARCH="unix"
 
 if [ "$TARGET_VERSION" = "" ];then
@@ -49,7 +50,6 @@ open ftp.vim.org
 user anonymous pass
 cd pub/vim/patches/$TARGET_VERSION
 pwd
-ls $TARGET_VERSION.*
 mget $TARGET_VERSION.*
 bye
 EOF
@@ -74,4 +74,4 @@ done | patch -p0
 make clean
 make
 
-echo "To use this node, do 'export PATH=$SRC_CORE_DIR/bin:\$PATH'."
+echo "To use this node, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
