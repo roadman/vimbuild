@@ -57,7 +57,8 @@ patchlist=`ls -v $TARGET_VERSION.*`
 
 # run patch
 cd $SRC_DIR
-cd `ls | grep vim`
+SRC_CORE_DIR=`ls | grep vim`
+cd $SRC_CORE_DIR
 for patchfile in $patchlist; do
     cat $PATCH_DIR/$patchfile
 done | patch -p0
@@ -72,3 +73,5 @@ done | patch -p0
 # make
 make clean
 make
+
+echo "To use this node, do 'export PATH=$SRC_CORE_DIR/bin:\$PATH'."
