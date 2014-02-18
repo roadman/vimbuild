@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Vimbuild by roadman</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/roadman/vimbuild">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/roadman/vimbuild/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/roadman/vimbuild/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Vimbuild</h1>
+          <p>vim auto build command</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/roadman">roadman</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="vim-build" class="anchor" href="#vim-build"><span class="octicon octicon-link"></span></a>vim build</h1>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>usage</h2>
+
+<div class="highlight highlight-bash"><pre>./vim-install <span class="o">[</span>TARGET_VERSION<span class="o">]</span>
+</pre></div>
+
+<h2>
+<a name="build-example" class="anchor" href="#build-example"><span class="octicon octicon-link"></span></a>build example</h2>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>git clone https://github.com/roadman/vimbuild.git
+<span class="nv">$ </span><span class="nb">cd </span>vimbuild
+<span class="nv">$ </span>./vim-install 7.4
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">'export PATH="$HOME/vimbuild/build/7.4/vim74/src/:$PATH"'</span> &gt;&gt; <span class="nv">$HOME</span>/.bashrc
+</pre></div>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
