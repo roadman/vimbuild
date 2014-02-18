@@ -33,19 +33,25 @@ SRC_ARC_URL_PATH="ftp://ftp.vim.org/pub/vim"
 SRC_ARC_FILENAME="vim-"$TARGET_VERSION".tar.bz2"
 
 # vim source download
-mkdir -p $ARC_DIR
-cd $ARC_DIR
-curl -O $SRC_ARC_URL_PATH/$ARCH/$SRC_ARC_FILENAME
+download_vim_source() {
+    mkdir -p $ARC_DIR
+    cd $ARC_DIR
+    curl -O $SRC_ARC_URL_PATH/$ARCH/$SRC_ARC_FILENAME
+}
 
-rm -fr $SRC_DIR
-mkdir -p $SRC_DIR
-cd $SRC_DIR
-tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
+uncompress_vim_source() {
+    cd $ARC_DIR
+    rm -fr $SRC_DIR
+    mkdir -p $SRC_DIR
+    cd $SRC_DIR
+    tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
+}
 
 # patch download
-mkdir -p $PATCH_DIR
-cd $PATCH_DIR
-ftp -n -i  <<EOF
+download_patch() {
+    mkdir -p $PATCH_DIR
+    cd $PATCH_DIR
+    ftp -n -i  <<EOF
 open ftp.vim.org
 user anonymous pass
 cd pub/vim/patches/$TARGET_VERSION
@@ -53,25 +59,40 @@ pwd
 mget $TARGET_VERSION.*
 bye
 EOF
-patchlist=`ls -v $TARGET_VERSION.*`
+}
 
 # run patch
-cd $SRC_DIR
-SRC_CORE_DIR=`ls | grep vim`
-cd $SRC_CORE_DIR
-for patchfile in $patchlist; do
-    cat $PATCH_DIR/$patchfile
-done | patch -p0
+run_patch() {
+    cd $PATCH_DIR
+    patchlist=`ls -v $TARGET_VERSION.*`
+    cd $SRC_DIR
+    SRC_CORE_DIR=`ls | grep vim`
+    cd $SRC_CORE_DIR
+    for patchfile in $patchlist; do
+        cat $PATCH_DIR/$patchfile
+    done | patch -p0
+}
 
 # configure
-./configure \
---enable-multibyte \
---with-features=huge \
---disable-selinux \
---prefix=/usr/local
+run_configure() {
+    ./configure \
+ --enable-multibyte \
+ --with-features=huge \
+ --disable-selinux \
+ --prefix=/usr/local
+}
 
 # make
-make clean
-make
+build_vim() {
+    make clean
+    make
+}
+
+download_vim_source
+uncompress_vim_source
+download_patch
+run_patch
+run_configure
+build_vim
 
 echo "To use this node, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
