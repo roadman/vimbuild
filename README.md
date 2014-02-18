@@ -1,4 +1,4 @@
-vim_compile
+vim build
 ===========
 
 usage
