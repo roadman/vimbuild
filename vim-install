@@ -149,13 +149,13 @@ run_patch() {
 
 # configure
 run_configure() {
-    cd $SRC_CORE_DIR
+    cd $SRC_DIR/$SRC_CORE_DIR
     ./configure $CONFIGURE_OPTIONS
 }
 
 # make
 build_vim() {
-    cd $SRC_CORE_DIR
+    cd $SRC_DIR/$SRC_CORE_DIR
     make clean
     make
 }
@@ -192,4 +192,4 @@ elif [ "$COMMAND" = "build" ];then
     build_vim
 fi
 
-echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
+echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/src:\$PATH'."
