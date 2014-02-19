@@ -54,6 +54,19 @@ else
     PATCH_DIR=""
 fi
 
+command_clean() {
+    cd $CUR_DIR
+    rm -fr \
+ $CUR_DIR/build/$TARGET_VERSION \
+ $CUR_DIR/patches/$TARGET_VERSION \
+ $FILE_VERSIONS_LIST
+}
+
+if [ "$COMMAND" = "clean" ];then
+    command_clean
+    exit
+fi
+
 if [ "$CONFIGURE_OPTIONS" = "" ];then
     CONFIGURE_OPTIONS="\
  --enable-multibyte     \
@@ -146,19 +159,6 @@ build_vim() {
     make clean
     make
 }
-
-command_clean() {
-    cd $CUR_DIR
-    rm -fr \
- $CUR_DIR/build/$TARGET_VERSION \
- $CUR_DIR/patches/$TARGET_VERSION \
- $FILE_VERSIONS_LIST
-}
-
-if [ "$COMMAND" = "clean" ];then
-    command_clean
-    exit
-fi
 
 if [ "$COMMAND" = "versions" ];then
     if [ ! -f $FILE_VERSIONS_LIST ];then
