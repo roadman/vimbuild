@@ -171,4 +171,4 @@ elif [ "$COMMAND" = "build" ];then
     build_vim
 fi
 
-echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
+echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/src:\$PATH'."
