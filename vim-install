@@ -3,7 +3,7 @@
 CUR_DIR=`pwd`
 
 usage() {
-    echo "Usage: $0 version"
+    echo "Usage: $0 [install|build|clean|update|versions] [TARGET_VERSION]"
 }
 
 CONFIGURE_OPTIONS=""
