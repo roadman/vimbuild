@@ -156,7 +156,7 @@ if [ "$COMMAND" = "versions" ];then
 fi
 
 if [ "$COMMAND" = "install" ];then
-    get_version
+#    get_version
     command_clean
     download_vim_source
     download_patch
