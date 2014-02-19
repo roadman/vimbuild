@@ -25,7 +25,7 @@ do
 done
 
 # command
-if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" ]; then
+if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" ]; then
     COMMAND=$1
     if [ "$2" != "" ];then
         TARGET_VERSION=$2
@@ -40,7 +40,7 @@ else
     fi
 fi
 
-FILE_VERSIONS_LIST=".versions"
+FILE_VERSIONS_LIST="$CUR_DIR/.versions"
 ARCH="unix"
 ARC_DIR="$CUR_DIR/vim"
 FTP_VIM_PATH="pub/vim"
@@ -49,11 +49,9 @@ SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
 if [ "$TARGET_VERSION" != "" ];then
     SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
     PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
-    SRC_ARC_FILENAME="vim-"$TARGET_VERSION".tar.bz2"
 else
     SRC_DIR=""
     PATCH_DIR=""
-    SRC_ARC_FILENAME=""
 fi
 
 if [ "$CONFIGURE_OPTIONS" = "" ];then
@@ -63,14 +61,6 @@ if [ "$CONFIGURE_OPTIONS" = "" ];then
  --disable-selinux      \
  --prefix=/usr/local"
 fi
-
-# vim source download
-download_vim_source() {
-    cd $CUR_DIR
-    mkdir -p $ARC_DIR
-    cd $ARC_DIR
-    curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
-}
 
 get_version() {
     cd $CUR_DIR
@@ -82,6 +72,26 @@ pwd
 nlist vim-* $FILE_VERSIONS_LIST
 bye
 EOF
+}
+
+SRC_ARC_FILENAME=""
+if [ "$TARGET_VERSION" != "" ];then
+    if [ ! -f $FILE_VERSIONS_LIST ];then
+        get_version
+    fi
+    if [ ! -f $FILE_VERSIONS_LIST ];then
+        echo "not found $FILE_VERSIONS_LIST"
+        exit
+    fi
+    SRC_ARC_FILENAME=`egrep "^vim-"$TARGET_VERSION"\." $FILE_VERSIONS_LIST`
+fi
+
+# vim source download
+download_vim_source() {
+    cd $CUR_DIR
+    mkdir -p $ARC_DIR
+    cd $ARC_DIR
+    curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
 }
 
 disp_version() {
@@ -141,7 +151,8 @@ command_clean() {
     cd $CUR_DIR
     rm -fr \
  $CUR_DIR/build/$TARGET_VERSION \
- $CUR_DIR/patches/$TARGET_VERSION
+ $CUR_DIR/patches/$TARGET_VERSION \
+ $FILE_VERSIONS_LIST
 }
 
 if [ "$COMMAND" = "clean" ];then
@@ -150,8 +161,18 @@ if [ "$COMMAND" = "clean" ];then
 fi
 
 if [ "$COMMAND" = "versions" ];then
-    get_version
+    if [ ! -f $FILE_VERSIONS_LIST ];then
+        get_version
+    fi
     disp_version
+    exit
+fi
+
+if [ "$COMMAND" = "update" ];then
+    command_clean
+    get_version
+    download_vim_source
+    download_patch
     exit
 fi
 
