@@ -6,11 +6,17 @@ usage() {
     echo "Usage: $0 version"
 }
 
-while getopts h OPT
+CONFIGURE_OPTIONS=""
+TARGET_VERSION="7.4"
+
+while getopts hc: OPT
 do
     case $OPT in
         h)  usage
             exit
+            ;;
+        c)
+            CONFIGURE_OPTIONS="$OPTARG"
             ;;
         \?) usage
             exit
@@ -18,19 +24,43 @@ do
     esac
 done
 
-TARGET_VERSION=$1
-ARCH="unix"
-
-if [ "$TARGET_VERSION" = "" ];then
-    TARGET_VERSION="7.4"
+# command
+if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" ]; then
+    COMMAND=$1
+    if [ "$2" != "" ];then
+        TARGET_VERSION=$2
+    fi
+elif [ "$1" = "versions" ];then
+    COMMAND=$1
+    TARGET_VERSION=""
+else
+    COMMAND="install"
+    if [ "$1" != "" ];then
+        TARGET_VERSION=$1
+    fi
 fi
 
+ARCH="unix"
 ARC_DIR="$CUR_DIR/vim"
-SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
-PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
-
 SRC_ARC_URL_PATH="ftp://ftp.vim.org/pub/vim"
-SRC_ARC_FILENAME="vim-"$TARGET_VERSION".tar.bz2"
+
+if [ "$TARGET_VERSION" != "" ];then
+    SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
+    PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
+    SRC_ARC_FILENAME="vim-"$TARGET_VERSION".tar.bz2"
+else
+    SRC_DIR=""
+    PATCH_DIR=""
+    SRC_ARC_FILENAME=""
+fi
+
+if [ "$CONFIGURE_OPTIONS" = "" ];then
+    CONFIGURE_OPTIONS="\
+ --enable-multibyte     \
+ --with-features=huge   \
+ --disable-selinux      \
+ --prefix=/usr/local"
+fi
 
 # vim source download
 download_vim_source() {
@@ -75,11 +105,7 @@ run_patch() {
 
 # configure
 run_configure() {
-    ./configure \
- --enable-multibyte \
- --with-features=huge \
- --disable-selinux \
- --prefix=/usr/local
+    ./configure $CONFIGURE_OPTIONS
 }
 
 # make
@@ -95,4 +121,4 @@ run_patch
 run_configure
 build_vim
 
-echo "To use this node, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
+echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
