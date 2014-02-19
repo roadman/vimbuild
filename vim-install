@@ -178,7 +178,7 @@ fi
 
 if [ "$COMMAND" = "install" ];then
 #    get_version
-    command_clean
+#    command_clean
     download_vim_source
     download_patch
     uncompress_vim_source
