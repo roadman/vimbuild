@@ -25,7 +25,7 @@ do
 done
 
 # command
-if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" ]; then
+if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" ]; then
     COMMAND=$1
     if [ "$2" != "" ];then
         TARGET_VERSION=$2
@@ -64,21 +64,15 @@ fi
 
 # vim source download
 download_vim_source() {
+    cd $CUR_DIR
     mkdir -p $ARC_DIR
     cd $ARC_DIR
     curl -O $SRC_ARC_URL_PATH/$ARCH/$SRC_ARC_FILENAME
 }
 
-uncompress_vim_source() {
-    cd $ARC_DIR
-    rm -fr $SRC_DIR
-    mkdir -p $SRC_DIR
-    cd $SRC_DIR
-    tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
-}
-
 # patch download
 download_patch() {
+    cd $CUR_DIR
     mkdir -p $PATCH_DIR
     cd $PATCH_DIR
     ftp -n -i  <<EOF
@@ -89,6 +83,14 @@ pwd
 mget $TARGET_VERSION.*
 bye
 EOF
+}
+
+uncompress_vim_source() {
+    cd $CUR_DIR
+    rm -fr $SRC_DIR
+    mkdir -p $SRC_DIR
+    cd $SRC_DIR
+    tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
 }
 
 # run patch
@@ -105,20 +107,47 @@ run_patch() {
 
 # configure
 run_configure() {
+    cd $SRC_CORE_DIR
     ./configure $CONFIGURE_OPTIONS
 }
 
 # make
 build_vim() {
+    cd $SRC_CORE_DIR
     make clean
     make
 }
 
-download_vim_source
-uncompress_vim_source
-download_patch
-run_patch
-run_configure
-build_vim
+command_clean() {
+    cd $CUR_DIR
+    rm -fr \
+ $CUR_DIR/build/$TARGET_VERSION \
+ $CUR_DIR/patches/$TARGET_VERSION
+}
+
+if [ "$COMMAND" = "clean" ];then
+    command_clean
+    exit
+fi
+
+if [ "$COMMAND" = "versions" ];then
+    echo "not impliment."
+    exit
+fi
+
+if [ "$COMMAND" = "install" ];then
+    command_clean
+    download_vim_source
+    download_patch
+    uncompress_vim_source
+    run_patch
+    run_configure
+    build_vim
+elif [ "$COMMAND" = "build" ];then
+    uncompress_vim_source
+    run_patch
+    run_configure
+    build_vim
+fi
 
 echo "To use this vim, do 'export PATH=$SRC_DIR/$SRC_CORE_DIR/bin:\$PATH'."
