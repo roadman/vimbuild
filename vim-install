@@ -40,9 +40,11 @@ else
     fi
 fi
 
+FILE_VERSIONS_LIST=".versions"
 ARCH="unix"
 ARC_DIR="$CUR_DIR/vim"
-SRC_ARC_URL_PATH="ftp://ftp.vim.org/pub/vim"
+FTP_VIM_PATH="pub/vim"
+SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
 
 if [ "$TARGET_VERSION" != "" ];then
     SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
@@ -67,7 +69,24 @@ download_vim_source() {
     cd $CUR_DIR
     mkdir -p $ARC_DIR
     cd $ARC_DIR
-    curl -O $SRC_ARC_URL_PATH/$ARCH/$SRC_ARC_FILENAME
+    curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
+}
+
+get_version() {
+    cd $CUR_DIR
+    ftp -n -i  <<EOF
+open ftp.vim.org
+user anonymous pass
+cd $FTP_VIM_PATH/$ARCH
+pwd
+nlist vim-* $FILE_VERSIONS_LIST
+bye
+EOF
+}
+
+disp_version() {
+    cd $CUR_DIR
+    grep -v ".diff." $FILE_VERSIONS_LIST | cut -d"." -f1-2 | cut -d"-" -f2-
 }
 
 # patch download
@@ -78,7 +97,7 @@ download_patch() {
     ftp -n -i  <<EOF
 open ftp.vim.org
 user anonymous pass
-cd pub/vim/patches/$TARGET_VERSION
+cd $FTP_VIM_PATH/patches/$TARGET_VERSION
 pwd
 mget $TARGET_VERSION.*
 bye
@@ -131,11 +150,13 @@ if [ "$COMMAND" = "clean" ];then
 fi
 
 if [ "$COMMAND" = "versions" ];then
-    echo "not impliment."
+    get_version
+    disp_version
     exit
 fi
 
 if [ "$COMMAND" = "install" ];then
+    get_version
     command_clean
     download_vim_source
     download_patch
