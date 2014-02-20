@@ -3,7 +3,7 @@
 CUR_DIR=`pwd`
 
 usage() {
-    echo "Usage: $0 [install|build|clean|update|versions] [TARGET_VERSION]"
+    echo "Usage: $0 [install|build|clean|update|versions|rpmbuild] [TARGET_VERSION]"
 }
 
 CONFIGURE_OPTIONS=""
@@ -25,7 +25,7 @@ do
 done
 
 # command
-if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" ]; then
+if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" -o "$1" = "rpmbuild" ]; then
     COMMAND=$1
     if [ "$2" != "" ];then
         TARGET_VERSION=$2
@@ -160,23 +160,22 @@ build_vim() {
     make
 }
 
-if [ "$COMMAND" = "versions" ];then
+if [ "$COMMAND" = "rpmbuild" ];then
+    echo "not impliment."
+    exit
+elif [ "$COMMAND" = "versions" ];then
     if [ ! -f $FILE_VERSIONS_LIST ];then
         get_version
     fi
     disp_version
     exit
-fi
-
-if [ "$COMMAND" = "update" ];then
+elif [ "$COMMAND" = "update" ];then
     command_clean
     get_version
     download_vim_source
     download_patch
     exit
-fi
-
-if [ "$COMMAND" = "install" ];then
+elif [ "$COMMAND" = "install" ];then
 #    get_version
 #    command_clean
     download_vim_source
