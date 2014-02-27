@@ -58,7 +58,7 @@ else
     fi
 fi
 
-echo $TARGET_VERSION
+#echo $TARGET_VERSION
 
 ARCH="unix"
 SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
