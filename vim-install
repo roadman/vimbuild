@@ -2,12 +2,26 @@
 
 CUR_DIR=`pwd`
 
+FILE_VERSIONS_LIST="$CUR_DIR/.versions"
+ARC_DIR="$CUR_DIR/vim"
+FTP_VIM_PATH="pub/vim"
+
 usage() {
     echo "Usage: $0 [install|build|clean|update|versions|rpmbuild] [TARGET_VERSION]"
 }
 
+disp_version() {
+    cd $CUR_DIR
+    grep -v ".diff." $FILE_VERSIONS_LIST | cut -d"." -f1-2 | cut -d"-" -f2-
+}
+
+disp_version_latest() {
+    cd $CUR_DIR
+    disp_version | tail -1
+}
+
 CONFIGURE_OPTIONS=""
-TARGET_VERSION="7.4"
+TARGET_VERSION=""
 
 while getopts hc: OPT
 do
@@ -27,7 +41,9 @@ done
 # command
 if [ "$1" = "install" -o "$1" = "build" -o "$1" = "clean" -o "$1" = "update" -o "$1" = "rpmbuild" ]; then
     COMMAND=$1
-    if [ "$2" != "" ];then
+    if [ "$2" = "" ];then
+        TARGET_VERSION=$(disp_version_latest)
+    else
         TARGET_VERSION=$2
     fi
 elif [ "$1" = "versions" ];then
@@ -35,15 +51,16 @@ elif [ "$1" = "versions" ];then
     TARGET_VERSION=""
 else
     COMMAND="install"
-    if [ "$1" != "" ];then
+    if [ "$1" = "" ];then
+        TARGET_VERSION=$(disp_version_latest)
+    else
         TARGET_VERSION=$1
     fi
 fi
 
-FILE_VERSIONS_LIST="$CUR_DIR/.versions"
+echo $TARGET_VERSION
+
 ARCH="unix"
-ARC_DIR="$CUR_DIR/vim"
-FTP_VIM_PATH="pub/vim"
 SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
 
 if [ "$TARGET_VERSION" != "" ];then
@@ -105,11 +122,6 @@ download_vim_source() {
     mkdir -p $ARC_DIR
     cd $ARC_DIR
     curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
-}
-
-disp_version() {
-    cd $CUR_DIR
-    grep -v ".diff." $FILE_VERSIONS_LIST | cut -d"." -f1-2 | cut -d"-" -f2-
 }
 
 # patch download
