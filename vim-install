@@ -3,7 +3,7 @@
 CUR_DIR=`pwd`
 
 ARCH="unix"
-FILE_VERSIONS_LIST="$CUR_DIR/.versions"
+FILE_VERSIONS_LIST="$CUR_DIR/.vim-versions"
 ARC_DIR="$CUR_DIR/vim"
 FTP_VIM_PATH="pub/vim"
 SRC_ARC_URL_PATH="ftp://ftp.vim.org/$FTP_VIM_PATH/$ARCH"
@@ -128,11 +128,15 @@ download_vim_source() {
     cd $CUR_DIR
     mkdir -p $ARC_DIR
     cd $ARC_DIR
-    curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
+    if [ ! -f $SRC_ARC_FILENAME ]; then
+        curl -O $SRC_ARC_URL_PATH/$SRC_ARC_FILENAME
+    fi
 }
 
+FILE_PATCHES_LIST="$PATCH_DIR/.vim-patches"
+
 # patch download
-download_patch() {
+get_patch_list() {
     cd $CUR_DIR
     mkdir -p $PATCH_DIR
     cd $PATCH_DIR
@@ -141,9 +145,22 @@ open ftp.vim.org
 user anonymous pass
 cd $FTP_VIM_PATH/patches/$TARGET_VERSION
 pwd
-mget $TARGET_VERSION.*
+nlist $TARGET_VERSION.* $FILE_PATCHES_LIST
 bye
 EOF
+}
+
+download_patch() {
+    cd $CUR_DIR
+    cd $PATCH_DIR
+    cat $FILE_PATCHES_LIST | while read PATCH_FILE; do
+        URL_PATCH_FILE="ftp://ftp.vim.org/$FTP_VIM_PATH/patches/$TARGET_VERSION/$PATCH_FILE"
+        echo $URL_PATCH_FILE
+        if [ ! -f $PATCH_FILE ];then
+            rm -f $PATCH_FILE
+            curl -O $URL_PATCH_FILE
+        fi
+    done
 }
 
 uncompress_vim_source() {
@@ -193,12 +210,14 @@ if [ "$COMMAND" = "update" ];then
     command_clean
     get_version
     download_vim_source
+    get_patch_list
     download_patch
     exit
 elif [ "$COMMAND" = "install" ];then
 #    get_version
 #    command_clean
     download_vim_source
+    get_patch_list
     download_patch
     uncompress_vim_source
     run_patch
