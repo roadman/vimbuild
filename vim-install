@@ -157,7 +157,6 @@ download_patch() {
         URL_PATCH_FILE="ftp://ftp.vim.org/$FTP_VIM_PATH/patches/$TARGET_VERSION/$PATCH_FILE"
         echo $URL_PATCH_FILE
         if [ ! -f $PATCH_FILE ];then
-            rm -f $PATCH_FILE
             curl -O $URL_PATCH_FILE
         fi
     done
