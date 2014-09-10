@@ -158,7 +158,7 @@ download_patch() {
         URL_PATCH_FILE="http://ftp.vim.org/$FTP_VIM_PATH/patches/$TARGET_VERSION/$PATCH_FILE"
         echo "$URL_PATCH_FILE" >> $FILE_PATCHES_LIST.u
     done
-    cat $FILE_PATCHES_LIST.u | xargs wget
+    cat $FILE_PATCHES_LIST.u | xargs wget -N -c 
 }
 
 uncompress_vim_source() {
