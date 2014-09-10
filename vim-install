@@ -80,9 +80,11 @@ fi
 
 if [ "$TARGET_VERSION" != "" ];then
     SRC_DIR="$CUR_DIR/build/$TARGET_VERSION"
+    BIN_DIR="$CUR_DIR/bin/$TARGET_VERSION"
     PATCH_DIR="$CUR_DIR/patches/$TARGET_VERSION"
 else
     SRC_DIR=""
+    BIN_DIR=""
     PATCH_DIR=""
 fi
 
@@ -90,6 +92,7 @@ command_clean() {
     cd $CUR_DIR
     rm -fr \
  $SRC_DIR \
+ $BIN_DIR \
  $PATCH_DIR \
  $FILE_VERSIONS_LIST
 }
@@ -111,7 +114,7 @@ if [ "$CONFIGURE_OPTIONS" = "" ];then
  --enable-multibyte     \
  --with-features=huge   \
  --disable-selinux      \
- --prefix=/usr/local"
+ --prefix=$BIN_DIR"
 fi
 
 SRC_ARC_FILENAME=""
@@ -158,13 +161,14 @@ download_patch() {
         URL_PATCH_FILE="http://ftp.vim.org/$FTP_VIM_PATH/patches/$TARGET_VERSION/$PATCH_FILE"
         echo "$URL_PATCH_FILE" >> $FILE_PATCHES_LIST.u
     done
-    cat $FILE_PATCHES_LIST.u | xargs wget -N -c 
+    cat $FILE_PATCHES_LIST.u | xargs wget -N -c
 }
 
 uncompress_vim_source() {
     cd $CUR_DIR
     rm -fr $SRC_DIR
     mkdir -p $SRC_DIR
+    mkdir -p $BIN_DIR
     cd $SRC_DIR
     tar -xvjf $ARC_DIR/$SRC_ARC_FILENAME
 }
@@ -192,6 +196,7 @@ build_vim() {
     cd $SRC_DIR/$SRC_CORE_DIR
     make clean
     make
+    make install
 }
 
 if [ "$COMMAND" = "rpmbuild" ];then
