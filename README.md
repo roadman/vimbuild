@@ -14,6 +14,7 @@ build example
 easy install
 ```bash
 $ git clone https://github.com/roadman/vimbuild.git
+$ sudo yum install -y ftp wget ncurses-devel
 $ cd vimbuild
 $ ./vim-install versions
 $ ./vim-install 7.4
