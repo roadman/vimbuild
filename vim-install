@@ -121,7 +121,8 @@ SRC_ARC_FILENAME=""
 if [ "$TARGET_VERSION" != "" ];then
     if [ ! -f $FILE_VERSIONS_LIST ];then
         echo "not found $FILE_VERSIONS_LIST"
-        exit
+        get_version
+        #exit
     fi
     SRC_ARC_FILENAME=`egrep "^vim-"$TARGET_VERSION"\." $FILE_VERSIONS_LIST`
 fi
