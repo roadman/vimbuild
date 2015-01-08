@@ -16,7 +16,6 @@ easy install
 $ git clone https://github.com/roadman/vimbuild.git
 $ sudo yum install -y ftp wget ncurses-devel
 $ cd vimbuild
-$ ./vim-install versions
 $ ./vim-install 7.4
 $ echo 'export PATH="$HOME/vimbuild/build/7.4/vim74/src/:$PATH"' >> $HOME/.bashrc
 ```
